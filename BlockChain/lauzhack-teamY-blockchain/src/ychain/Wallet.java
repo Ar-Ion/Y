@@ -2,14 +2,22 @@ package ychain;
 
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
+import java.util.HashMap;
 
 public class Wallet {
 
     public PublicKey publicKey;
     public PrivateKey privateKey;
 
+    public HashMap<String,Transaction> history = new HashMap<>();
+
+
     public Wallet(){
         generateKeyPair();
+    }
+
+    public int getNumberOfTransactions(){
+        return history.size();
     }
 
     /**
@@ -18,7 +26,7 @@ public class Wallet {
     public void generateKeyPair() {
 
         try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA","BC");
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA");
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
             ECGenParameterSpec ecSpec = new ECGenParameterSpec("prime192v1");
             // Initialize the key generator and generate a KeyPair

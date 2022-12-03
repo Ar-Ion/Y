@@ -1,4 +1,6 @@
 package ychain;
+import org.jetbrains.annotations.NotNull;
+
 import java.security.*;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -33,7 +35,7 @@ public class StringUtil {
         Signature dsa;
         byte[] output = new byte[0];
         try {
-            dsa = Signature.getInstance("ECDSA", "BC");
+            dsa = Signature.getInstance("ECDSA");
             dsa.initSign(privateKey);
             byte[] strByte = input.getBytes();
             dsa.update(strByte);
@@ -48,7 +50,7 @@ public class StringUtil {
     //Verifies a String signature
     public static boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature) {
         try {
-            Signature ecdsaVerify = Signature.getInstance("ECDSA", "BC");
+            Signature ecdsaVerify = Signature.getInstance("ECDSA");
             ecdsaVerify.initVerify(publicKey);
             ecdsaVerify.update(data.getBytes());
             return ecdsaVerify.verify(signature);
@@ -58,15 +60,16 @@ public class StringUtil {
     }
 
     //Returns difficulty string target, to compare to hash. eg difficulty of 5 will return "00000"
-    public static String getDificultyString(int difficulty) {
+    public static @NotNull String getDificultyString(int difficulty) {
         return new String(new char[difficulty]).replace('\0', '0');
     }
 
-    public static String getStringFromKey(Key key) {
+    public static String getStringFromKey(@NotNull Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    public static String getMerkleRoot(ArrayList<Transaction> transactions) {
+
+    public static String getMerkleRoot(@NotNull ArrayList<Transaction> transactions) {
         int count = transactions.size();
 
         List<String> previousTreeLayer = new ArrayList<String>();
