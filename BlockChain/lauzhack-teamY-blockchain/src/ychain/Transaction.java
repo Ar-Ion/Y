@@ -14,15 +14,12 @@ public class Transaction {
 
     public byte[] signature;            //This is to prevent anybody else from spending funds in our wallet.
 
-    public ArrayList<TransactionInput> inputs;
-    public ArrayList<TransactionOutput> outputs = new ArrayList<>();
 
     // ---------------------------------------------------------------------------------------------------------------------
     // Constructor:
-    public Transaction(PublicKey from,  JSONObject description,  ArrayList<TransactionInput> inputs) {
+    public Transaction(PublicKey from,  JSONObject description) {
         this.sender = from;
         this.description = description;
-        this.inputs = inputs;
     }
 
     // ---------------------------------------------------------------------------------------------------------------------
