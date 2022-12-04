@@ -6,38 +6,33 @@ import java.util.HashMap;
 
 public class Wallet {
 
-    public PublicKey publicKey;
-    public PrivateKey privateKey;
 
-    public HashMap<String,Transaction> history = new HashMap<>();
+    public String publicKey;
+
+    private int difficulty = 2;
+
+    public HashMap<String,Transaction> history;
 
 
-    public Wallet(){
-        generateKeyPair();
+    public Wallet(String publicKey){
+        this.publicKey = publicKey;
+        this.history = new HashMap<>();
     }
 
     public int getNumberOfTransactions(){
         return history.size();
     }
 
-    /**
-     *  Elliptic Key cryptography
-     */
-    public void generateKeyPair() {
-
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA");
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            ECGenParameterSpec ecSpec = new ECGenParameterSpec("prime192v1");
-            // Initialize the key generator and generate a KeyPair
-            keyGen.initialize(ecSpec, random);   //256 bytes provides an acceptable security level
-            KeyPair keyPair = keyGen.generateKeyPair();
-            // Set the public and private keys from the keyPair
-            privateKey = keyPair.getPrivate();
-            publicKey = keyPair.getPublic();
-
-        }catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+    public void incrementDifficulty(){
+        this.difficulty++;
     }
+
+    public int getDifficulty(){
+        return this.difficulty;
+    }
+
+    public void resetDifficulty(){
+        this.difficulty = 2;
+    }
+
 }

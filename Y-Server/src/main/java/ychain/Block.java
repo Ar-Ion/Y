@@ -73,10 +73,18 @@ public class Block {
 
         private String previousHash;
         private String merkleRoot;
+        public int count = 0;
+
         private final ArrayList<Transaction> transactions = new ArrayList<>();
 
-        public void addTransaction(Transaction t) {
+        public Block addTransaction(Transaction t) {
+            count += 1;
             this.transactions.add(t);
+            if (count == 10){
+                count = 0;
+                this.build();
+            }
+            return null;
         }
 
         public void setPreviousHash(String hash) {
