@@ -3,7 +3,7 @@ const { app, BrowserWindow, dialog, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
-const { update_blockchain, add_follower, count_followers } = require('./backend.js')
+const { update_blockchain, register_follower, count_followers } = require('./backend.js')
 
 const MAX_LATEST_CONTENT_COUNT = 20;
 const LATEST_TIME_DEFINITION = 1000*60*24*7; // 7-days is considered latest
@@ -15,8 +15,9 @@ let globalPeerID;
 
 userRegistrySynced = false;
 let userRegistry = {};
+userRegistry.name = "ArtY";
 userRegistry.user = {};
-userRegistry.user.following = [];
+userRegistry.user.following = ["12D3KooWJNxc8KTJ5wReLJ5v6GAq8HgS91BHJiMrbxdT9HhiquBF"];
 userRegistry.artist = {};
 userRegistry.artist.content = [];
 userRegistry.lastUpdate = 0;
@@ -91,8 +92,10 @@ ipcMain.on('load_registry', (event) => {
 });
 
 ipcMain.on('load_followers', async (event) => {
-    await followers;
-    event.reply('followers_loaded', followers);
+    if(followers) {
+        const f = await followers;
+        event.reply('followers_loaded', f);
+    }
 });
 
 ipcMain.on('load_latest_content', async (event) => {
@@ -129,14 +132,29 @@ async function sign_artwork(payload) {
         payload.date_updated = result;
         payload.signature = result_content.path;
 
-        userRegistry.artist.content.unshift(payload)
+        block_result = false;
 
-        //await update_user_registry()
+        console.log("Uploading to blockchain...")
 
-        await update_blockchain(Buffer.from(globalPeerID.id.publicKey).toString('hex'), payload.signature)
+        try {
+            const block_result = await update_blockchain(Buffer.from(globalPeerID.id.publicKey).toString('hex'), payload.signature)
+        } catch(e) {
+            console.log(e)
+        }
+
+        block_result = {}; // REMOVE THIS LINE FOR PRODUCTION
+        block_result.success = true;
+
+        if(block_result && block_result.success) {
+            userRegistry.artist.content.unshift(payload)
+
+            console.log("Updating P2P registry...")
+            await update_user_registry()
+            console.log("done")
+            mainWindow.webContents.send('artwork_signed', payload)
+        }
 
         selectedFile = null;
-        mainWindow.webContents.send('artwork_signed', payload)
     }
 }
 
@@ -144,6 +162,47 @@ ipcMain.on('sign_artwork', (event, payload) => {
     sign_artwork(payload)
 })
 
+async function add_follower(payload) {
+    console.log("Adding follower " + payload.uid + "...")
+
+    var resolved = globalNode.name.resolve(payload.uid)
+
+    var mostRecentTime = 0;
+    var mostRecentRegistry;
+
+    for await (const name of resolved) {
+      candidate = await fetchRegistry(name)
+
+      if(candidate.lastUpdate > mostRecentTime) {
+          mostRecentTime = candidate.lastUpdate;
+          mostRecentRegistry = candidate;
+      }
+    }
+
+    if(mostRecentRegistry) {
+        var date = new Date
+        const result = date.toLocaleString("en-GB", {timeZone: 'CET'})
+
+        payload.date_added = result;
+        payload.name = mostRecentRegistry.name;
+
+        userRegistry.user.following.unshift(payload)
+
+        await update_user_registry()
+
+        mainWindow.webContents.send('follower_added', payload)
+    }
+}
+
+ipcMain.on('add_follower', (event, payload) => {
+    add_follower(payload)
+})
+
+
+ipcMain.on('get_user_uid', async (event) => {
+    const result = await globalPeerID
+    event.reply('got_user_uid', result)
+})
 
 async function all(source) {
   const arr = []
@@ -190,7 +249,7 @@ async function fetchRegistry(ipfsPath) {
         return JSON.parse(serializedRegistry)
     } catch(error) {
         console.log(error)
-        return {}
+        return null
     }
 }
 
@@ -241,12 +300,15 @@ app.on("ready", async () => {
           mostRecentTime = candidate.lastUpdate;
           mostRecentRegistry = candidate;
       }
-
-      userRegistry = mostRecentRegistry;
-      userRegistrySynced = true;
-
-      mainWindow.webContents.send('registry_loaded', userRegistrySynced, userRegistry);
     }
+
+
+    if(mostRecentRegistry) {
+        userRegistry = mostRecentRegistry;
+        userRegistrySynced = true;
+    }
+
+    mainWindow.webContents.send('registry_loaded', userRegistrySynced, userRegistry);
 
     console.log("Latest registry: " + mostRecentTime)
 

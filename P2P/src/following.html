@@ -7,19 +7,27 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>ArtY</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+        <link href="../bower_components/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
+        <script src="../bower_components/jquery-3.6.1.min/index.js"></script>
+        <script src="../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="js/scripts.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+        <script src="assets/demo/chart-area-demo.js"></script>
+        <script src="assets/demo/chart-bar-demo.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
         <script src="./common_renderer.js" defer></script>
+        <script src="./following_renderer.js" defer></script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark px-5">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="index.html">ArtY</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar-->
-
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -28,7 +36,6 @@
                     </ul>
                 </li>
             </ul>
-
             <div class="d-flex align-items-center w-100 mx-auto">
               <strong id="syncing-text" class="text-secondary mx-auto">Syncing...</strong>
               <div id="syncing-progress" class="spinner-border ml-auto text-primary" role="status" aria-hidden="true"></div>
@@ -68,22 +75,49 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Latest Content</h1>
+                        <h1 class="mt-4">Follwed Artists</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">User's Home</li>
+                            <li class="breadcrumb-item"><a href="index.html">User's home</a></li>
+                            <li class="breadcrumb-item active">Followed Artists</li>
                         </ol>
-                        <div class="row" id="latest-content">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                Followed Artists
+                            </div>
+                            <div class="card-body">
+                                <div class="btn">
+                                </div>
+                                <table id="following-table"></table>
+                                <a class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Add follower</a>
+                            </div>
                         </div>
                     </div>
                 </main>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-        <script src="js/renderer.js"></script>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="sign-modal-label" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add a follower</h5>
+              </div>
+              <div class="modal-body">
+                  <div class="row m-3">
+                       <input class="form-control" id="artist" placeholder="Enter the artist's identifier" />
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal-close">Close</button>
+                <button type="button" class="btn btn-success" id="add-follower">Add
+                    <span id="adding-progress" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="sr-only">Loading...</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
     </body>
 </html>

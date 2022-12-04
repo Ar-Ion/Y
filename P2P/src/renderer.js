@@ -55,6 +55,8 @@ document.querySelector('#sign-artwork').addEventListener('click', () => {
             payload.meta_signature = null;
 
             window.electronAPI.sign_artwork(payload);
+        } else {
+            signingProgress.style.visibility = 'hidden';
         }
     }
 })
