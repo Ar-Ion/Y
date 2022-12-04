@@ -5,6 +5,9 @@ const fs = require('fs')
 
 const { update_blockchain, add_follower, count_followers } = require('./backend.js')
 
+const MAX_LATEST_CONTENT_COUNT = 20;
+const LATEST_TIME_DEFINITION = 1000*60*24*7; // 7-days is considered latest
+
 let mainWindow;
 let selectedFile;
 let globalNode;
@@ -19,6 +22,7 @@ userRegistry.artist.content = [];
 userRegistry.lastUpdate = 0;
 
 let followers;
+let latestContent;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -91,6 +95,11 @@ ipcMain.on('load_followers', async (event) => {
     event.reply('followers_loaded', followers);
 });
 
+ipcMain.on('load_latest_content', async (event) => {
+    await latestContent;
+    event.reply('latest_content_loaded', latestContent);
+});
+
 async function update_user_registry() {
     userRegistry.lastUpdate = Date.now();
 
@@ -120,7 +129,7 @@ async function sign_artwork(payload) {
         payload.date_updated = result;
         payload.signature = result_content.path;
 
-        userRegistry.artist.content.push(payload)
+        userRegistry.artist.content.unshift(payload)
 
         //await update_user_registry()
 
@@ -174,12 +183,34 @@ function toString (array) {
     return globalThis.Buffer.from(array.buffer, array.byteOffset, array.byteLength).toString('utf8')
 }
 
-
-
 async function fetchRegistry(ipfsPath) {
-    const data = concat(await all(globalNode.cat(ipfsPath)))
-    const serializedRegistry = toString(data)
-    return JSON.parse(serializedRegistry)
+    try {
+        const data = concat(await all(globalNode.cat(ipfsPath)))
+        const serializedRegistry = toString(data)
+        return JSON.parse(serializedRegistry)
+    } catch(error) {
+        console.log(error)
+        return {}
+    }
+}
+
+async function fetchLatestData() {
+    for(artist in userRegistry.user.following) {
+        artistRegistry = await fetchRegistry(artist)
+
+        for(entry in artistRegistry.artist.content) {
+
+            latestContent.push({ name: artist.name,  })
+
+            if(new Date() - new Date(entry.date_created) > LATEST_TIME_DEFINITION) {
+                break;
+            }
+        }
+
+        if(latestContent.length > MAX_LATEST_CONTENT_COUNT) {
+            break;
+        }
+    };
 }
 
 app.on("ready", async () => {

@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     sign_artwork: (payload) => ipcRenderer.send('sign_artwork', payload),
     load_registry: () => ipcRenderer.send('load_registry'),
     load_followers: () => ipcRenderer.send('load_followers'),
+    load_latest_content: () => ipcRenderer.send('load_latest_content'),
     artwork_selected: (func) => {
         ipcRenderer.on('artwork_selected', (event, artwork) => func(artwork));
     },
@@ -15,6 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on('registry_loaded', (event, synced, userRegistry) => func(synced, userRegistry));
     },
     followers_loaded: (func) => {
+        ipcRenderer.on('followers_loaded', (event, followers) => func(followers));
+    },
+    latest_content_loaded: (func) => {
         ipcRenderer.on('followers_loaded', (event, followers) => func(followers));
     }
 })

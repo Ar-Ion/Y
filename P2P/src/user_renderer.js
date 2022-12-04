@@ -19,6 +19,8 @@ function getNumberOfDays(start, end) {
     return diffInDays;
 }
 
+window.electronAPI.load_latest_content()
+
 window.electronAPI.latest_content_loaded((content) => {
 
     latestContent.innerHTML = '';
@@ -29,18 +31,18 @@ window.electronAPI.latest_content_loaded((content) => {
         var description = entry.description;
         var date = entry.date_created;
 
-        latestContent.innerHTML += '<div class="card col-md-3 text-center m-4 p-0">
+        latestContent.innerHTML += `<div class="card col-md-3 text-center m-4 p-0">
           <div class="card-header">
             Featured
           </div>
           <div class="card-body">
-            <h5 class="card-title">' + title + '</h5>
-            <p class="card-text">' + description + '</p>
+            <h5 class="card-title">` + title + `</h5>
+            <p class="card-text">` + description + `</p>
             <a href="#" class="btn btn-primary">Access content</a>
           </div>
           <div class="card-footer text-muted">
-            <span>' + getNumberOfDays(date, null) + '</span> days ago
+            <span>` + getNumberOfDays(date, null) + `</span> days ago
           </div>
-        </div>';
+        </div>`;
     })
 });
