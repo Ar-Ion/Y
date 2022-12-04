@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
         ipcRenderer.on('followers_loaded', (event, followers) => func(followers));
     },
     latest_content_loaded: (func) => {
-        ipcRenderer.on('followers_loaded', (event, followers) => func(followers));
+        ipcRenderer.on('latest_content_loaded', (event, followers) => func(followers));
     },
     follower_added: (func) => {
         ipcRenderer.on('follower_added', (event, payload) => func(payload));

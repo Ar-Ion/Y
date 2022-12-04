@@ -3,6 +3,8 @@
 // All of the Node.js APIs are available in this process.
 
 
+var latestContent = document.getElementById('latest-content');
+
 function getNumberOfDays(start, end) {
     const date1 = new Date(start);
     const date2 = new Date(end);
@@ -27,13 +29,14 @@ window.electronAPI.latest_content_loaded((content) => {
 
     content.forEach((entry) => {
 
+        var name = entry.name;
         var title = entry.title;
         var description = entry.description;
         var date = entry.date_created;
 
         latestContent.innerHTML += `<div class="card col-md-3 text-center m-4 p-0">
           <div class="card-header">
-            Featured
+            ` + name + `
           </div>
           <div class="card-body">
             <h5 class="card-title">` + title + `</h5>
@@ -41,7 +44,7 @@ window.electronAPI.latest_content_loaded((content) => {
             <a href="#" class="btn btn-primary">Access content</a>
           </div>
           <div class="card-footer text-muted">
-            <span>` + getNumberOfDays(date, null) + `</span> days ago
+            <span>` + getNumberOfDays(date, new Date()) + `</span> days ago
           </div>
         </div>`;
     })

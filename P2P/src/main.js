@@ -17,13 +17,12 @@ userRegistrySynced = false;
 let userRegistry = {};
 userRegistry.name = "ArtY";
 userRegistry.user = {};
-userRegistry.user.following = ["12D3KooWJNxc8KTJ5wReLJ5v6GAq8HgS91BHJiMrbxdT9HhiquBF"];
+userRegistry.user.following = [];
 userRegistry.artist = {};
 userRegistry.artist.content = [];
 userRegistry.lastUpdate = 0;
 
 let followers;
-let latestContent;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -98,9 +97,8 @@ ipcMain.on('load_followers', async (event) => {
     }
 });
 
-ipcMain.on('load_latest_content', async (event) => {
-    await latestContent;
-    event.reply('latest_content_loaded', latestContent);
+ipcMain.on('load_latest_content', (event) => {
+    fetchLatestData();
 });
 
 async function update_user_registry() {
@@ -254,22 +252,46 @@ async function fetchRegistry(ipfsPath) {
 }
 
 async function fetchLatestData() {
-    for(artist in userRegistry.user.following) {
-        artistRegistry = await fetchRegistry(artist)
+    content = []
 
-        for(entry in artistRegistry.artist.content) {
+    for(var followed of userRegistry.user.following) {
+        var mostRecentTime = 0;
+        var mostRecentRegistry;
 
-            latestContent.push({ name: artist.name,  })
+        for await (const name of globalNode.name.resolve(followed.uid)) {
+              candidate = await fetchRegistry(name)
 
-            if(new Date() - new Date(entry.date_created) > LATEST_TIME_DEFINITION) {
+              if(candidate.lastUpdate > mostRecentTime) {
+                  mostRecentTime = candidate.lastUpdate;
+                  mostRecentRegistry = candidate;
+              }
+          }
+
+        if(mostRecentRegistry) {
+
+            for(var entry of mostRecentRegistry.artist.content) {
+
+                element = {}
+                element.name = followed.name
+                element.title = entry.title
+                element.description = entry.description
+                element.type = entry.type
+                element.date_created = entry.date_created
+
+                content.push(element)
+
+                if(new Date() - new Date(entry.date_created) > LATEST_TIME_DEFINITION) {
+                    break;
+                }
+            }
+
+            if(latestContent.length > MAX_LATEST_CONTENT_COUNT) {
                 break;
             }
         }
+    }
 
-        if(latestContent.length > MAX_LATEST_CONTENT_COUNT) {
-            break;
-        }
-    };
+    mainWindow.webContents.send('latest_content_loaded', content);
 }
 
 app.on("ready", async () => {
@@ -313,6 +335,8 @@ app.on("ready", async () => {
     console.log("Latest registry: " + mostRecentTime)
 
     followers = count_followers(id.id.publicKey)
+
+    latestContent = fetchLatestData()
   } catch (err) {
     console.error(err);
   }
