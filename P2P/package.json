@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
-    "ipfs-core": "^0.16.1"
+    "ipfs-core": "^0.16.1",
+    "uint8arrays": "^4.0.2"
   },
   "devDependencies": {
     "electron": "^20.1.1",

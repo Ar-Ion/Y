@@ -7,9 +7,19 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>ArtY</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+        <link href="../bower_components/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
+        <script src="../bower_components/jquery-3.6.1.min/index.js"></script>
+        <script src="../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="js/scripts.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+        <script src="assets/demo/chart-area-demo.js"></script>
+        <script src="assets/demo/chart-bar-demo.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+        <script src="./common_renderer.js" defer></script>
+        <script src="./renderer.js" defer></script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -29,6 +39,10 @@
                     </ul>
                 </li>
             </ul>
+            <div class="d-flex align-items-center w-100 mx-auto">
+              <strong id="syncing-text" class="text-secondary mx-auto">Syncing...</strong>
+              <div id="syncing-progress" class="spinner-border ml-auto text-primary" role="status" aria-hidden="true"></div>
+            </div>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -96,39 +110,56 @@
                             <div class="card-body">
                                 <div class="btn">
                                 </div>
-                                <table id="datatablesSimple">
-                                    <thead>
-                                        <tr>
-                                            <th>Artwork's name</th>
-                                            <th>Type</th>
-                                            <th>Signature</th>
-                                            <th>Platforms</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Artwork's name</th>
-                                            <th>Type</th>
-                                            <th>Signature</th>
-                                            <th>Platforms</th>
-                                        </tr>                                        </tr>
-                                    </tfoot>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                                <a class="btn btn-primary btn-block" id="sign_artwork" href="#">Sign artwork</a>
+                                <table id="content-table"></table>
+                                <a class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#">Sign artwork</a>
                             </div>
                         </div>
                     </div>
                 </main>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="sign-modal-label" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Sign artwork</h5>
+              </div>
+              <div class="modal-body">
+                  <div class="row m-3">
+                       <input type="email" class="form-control" id="artwork-title" placeholder="Enter the title of your creation" />
+                  </div>
+                  <div class="row m-3">
+                      <textarea class="form-control" id="artwork-description" rows="5" placeholder="Enter a description (max. 1000 characters)"></textarea>
+                  </div>
+                  <div class="row m-3">
+                      <div class="col-6">
+                          <button type="button" class="btn btn-primary" id="select-artwork">Select file</button>
+                          <span id="selected-artwork" />
+                      </div>
+                      <div class="col-6">
+                          <select class="form-select" id="artwork-type" aria-label="Select the type">
+                              <option value="" selected disabled>Select type</option>
+                              <option value="music">Music</option>
+                              <option value="video">Video</option>
+                              <option value="picture">Picture</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="m-2">
+                      Disclaimer: When pressing "Sign" your artwork will be forever linked to your name.
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="modal-close">Close</button>
+                <button type="button" class="btn btn-warning" id="sign-artwork">Sign
+                    <span id="signing-progress" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="sr-only">Loading...</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
     </body>
 </html>

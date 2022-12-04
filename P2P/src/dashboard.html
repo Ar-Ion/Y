@@ -10,15 +10,16 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
         <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <script src="event_responder.js"></script>
+        <script src="./common_renderer.js" defer></script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark px-5">
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="index.html">ArtY</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar-->
+
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -30,6 +31,11 @@
                     </ul>
                 </li>
             </ul>
+
+            <div class="d-flex align-items-center w-100 mx-auto">
+              <strong id="syncing-text" class="text-secondary mx-auto">Syncing...</strong>
+              <div id="syncing-progress" class="spinner-border ml-auto text-primary" role="status" aria-hidden="true"></div>
+            </div>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -91,18 +97,18 @@
                         <div class="row">
                             <div class="col-xl col-md-6">
                                 <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">You own TBD pieces of art!</div>
+                                    <div class="card-body">You own <b id="num-artworks">TBD</b> pieces of art!</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">Manage my content</a>
+                                        <a class="small text-white stretched-link" href="manage.html">Manage my content</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl col-md-6">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-body">Warning Card</div>
+                                <div class="card bg-info text-white mb-4">
+                                    <div class="card-body">You have <b id="num-followers">TBD</b> followers!</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
+                                        <a class="small text-white stretched-link" href="followers.html">Manage followers</a>
                                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                     </div>
                                 </div>
@@ -129,6 +135,6 @@
         <script src="assets/demo/chart-area-demo.js"></script>
         <script src="assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+        <script src="js/renderer.js"></script>
     </body>
 </html>
