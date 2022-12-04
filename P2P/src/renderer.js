@@ -7,6 +7,7 @@ var signingProgress = document.getElementById('signing-progress');
 var artworkTitle = document.getElementById('artwork-title');
 var artworkDescription = document.getElementById('artwork-description');
 var artworkType = document.getElementById('artwork-type');
+var numFollowers = document.getElementById('num-followers');
 
 var modalClose = document.getElementById('modal-close');
 
@@ -71,6 +72,14 @@ window.electronAPI.artwork_signed((payload) => {
     contentTable.row.add([payload.title, payload.description, payload.type, payload.date_created, payload.date_updated]).draw()
 
     modalClose.click();
+});
+
+window.electronAPI.load_followers();
+
+window.electronAPI.followers_loaded((followers) => {
+    if(numFollowers) {
+        numFollowers.innerHTML = followers;
+    }
 });
 
 window.electronAPI.load_registry();

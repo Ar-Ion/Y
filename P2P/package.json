@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
+    "electron-fetch": "^1.9.1",
     "ipfs-core": "^0.16.1",
+    "remote-lib": "^0.2.1",
     "uint8arrays": "^4.0.2"
   },
   "devDependencies": {

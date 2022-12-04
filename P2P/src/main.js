@@ -3,6 +3,8 @@ const { app, BrowserWindow, dialog, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
+const { update_blockchain, add_follower, count_followers } = require('./backend.js')
+
 let mainWindow;
 let selectedFile;
 let globalNode;
@@ -14,8 +16,9 @@ userRegistry.user = {};
 userRegistry.user.following = [];
 userRegistry.artist = {};
 userRegistry.artist.content = [];
-userRegistry.artist.followers = [];
 userRegistry.lastUpdate = 0;
+
+let followers;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -28,7 +31,7 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile("src/dashboard.html");
+  mainWindow.loadFile("src/index.html");
 
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
@@ -83,6 +86,10 @@ ipcMain.on('load_registry', (event) => {
     event.reply('registry_loaded', userRegistrySynced, userRegistry);
 });
 
+ipcMain.on('load_followers', async (event) => {
+    await followers;
+    event.reply('followers_loaded', followers);
+});
 
 async function update_user_registry() {
     userRegistry.lastUpdate = Date.now();
@@ -115,7 +122,9 @@ async function sign_artwork(payload) {
 
         userRegistry.artist.content.push(payload)
 
-        await update_user_registry()
+        //await update_user_registry()
+
+        await update_blockchain(Buffer.from(globalPeerID.id.publicKey).toString('hex'), payload.signature)
 
         selectedFile = null;
         mainWindow.webContents.send('artwork_signed', payload)
@@ -195,10 +204,7 @@ app.on("ready", async () => {
     var mostRecentRegistry;
 
     for await (const name of node.name.resolve(id.id)) {
-      console.log(name)
       candidate = await fetchRegistry(name)
-
-      console.log(candidate)
 
       if(candidate.lastUpdate > mostRecentTime) {
           mostRecentTime = candidate.lastUpdate;
@@ -212,6 +218,8 @@ app.on("ready", async () => {
     }
 
     console.log("Latest registry: " + mostRecentTime)
+
+    followers = count_followers(id.id.publicKey)
   } catch (err) {
     console.error(err);
   }
