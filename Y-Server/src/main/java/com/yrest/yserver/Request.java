@@ -1,6 +1,5 @@
 package com.yrest.yserver;
 
-//import org..util.encoders.Base64;
 import ychain.Block;
 import ychain.Transaction;
 import ychain.Wallet;
@@ -22,9 +21,10 @@ public class Request {
         // to prevent blockchain flooding
         long latestStamp = Ychain.getInstance().timeMap.getOrDefault(publicKey, 0L);
         long now = new Date().getTime();
-        if (now - latestStamp <= 6000){
+        Ychain.getInstance().timeMap.put(publicKey, now);
+        if (now - latestStamp <= 60000){
             this.w.incrementDifficulty();
-            Ychain.getInstance().timeMap.put(publicKey, now);
+
         }else{
             this.w.resetDifficulty();
         }
@@ -34,6 +34,7 @@ public class Request {
         Block b = Ychain.getInstance().builder.addTransaction(t);
         if ( b != null){
             b.mineBlock(w.getDifficulty());
+            Ychain.getInstance().addBlock(b);
         }
         this.w.history.put(this.contentHash, t);
         Ychain.getInstance().walletMap.putIfAbsent(this.publicKey, w);
@@ -41,6 +42,6 @@ public class Request {
 
     @Override
     public String toString(){
-        return "public key: " + publicKey + "contentHash: " + contentHash;
+        return "public key: " + publicKey + "contentHash: " + contentHash + "Blockchain size: " + Ychain.getInstance().getSize();
     }
 }

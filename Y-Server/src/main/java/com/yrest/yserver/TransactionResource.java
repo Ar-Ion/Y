@@ -2,6 +2,8 @@ package com.yrest.yserver;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.json.simple.JSONObject;
+
 
 @Path("/transaction")
 public class TransactionResource {
@@ -11,20 +13,15 @@ public class TransactionResource {
     public String hello() {
         return "dummy";
     }
-
-    @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/{number}")
-    public String handleTransactionRequest(@PathParam("number") Integer value) {
-        return value.toString();
-    }
+    
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public String handleTransactionRequest(Request r) {
+        JSONObject obj = new JSONObject();
         r.createTransactionAndRegister();
-        return r.toString();
+        obj.put("success", "true");
+        return obj.toJSONString();
     }
 }

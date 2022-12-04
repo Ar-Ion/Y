@@ -62,11 +62,6 @@ public class Block {
         System.out.println("Block Mined!: " + hash);
     }
 
-    // standard getters and setters
-    public String getHash() {
-        return this.hash;
-    }
-
     // --------------------------------------------------------------------------------------------------------------
     // Builder
     public static class BlockBuilder {
@@ -80,9 +75,9 @@ public class Block {
         public Block addTransaction(Transaction t) {
             count += 1;
             this.transactions.add(t);
-            if (count == 10){
+            if (count == 3){
                 count = 0;
-                this.build();
+                return this.build();
             }
             return null;
         }

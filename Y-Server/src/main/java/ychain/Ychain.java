@@ -23,6 +23,14 @@ public class Ychain {
         return instance;
     }
 
+    public void addBlock(Block b){
+        this.blockchain.add(b);
+    }
+
+    public int getSize(){
+        return blockchain.size();
+    }
+
     //private constructor that puts initial block in the blockchain
     private Ychain(){
         // initial block

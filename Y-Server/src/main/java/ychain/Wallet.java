@@ -1,7 +1,5 @@
 package ychain;
 
-import java.security.*;
-import java.security.spec.ECGenParameterSpec;
 import java.util.HashMap;
 
 public class Wallet {
