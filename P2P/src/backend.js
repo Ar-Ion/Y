@@ -30,7 +30,7 @@ async function count_followers(publicKey) {
     }
 }
 
-function add_follower(publicKeyArtist, publicKeyFollower) {
+function register_follower(publicKeyArtist, publicKeyFollower) {
     try {
         postData = {};
 
@@ -48,5 +48,5 @@ function add_follower(publicKeyArtist, publicKeyFollower) {
 module.exports = {
    update_blockchain,
    count_followers,
-   add_follower
+   register_follower
 }
