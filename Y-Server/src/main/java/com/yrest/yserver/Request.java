@@ -9,7 +9,7 @@ import ychain.Ychain;
 import java.util.Date;
 
 public class Request {
-
+//    
     public String publicKey;
     public String contentHash;
     public Wallet w;
